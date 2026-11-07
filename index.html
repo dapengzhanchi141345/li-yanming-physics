@@ -135,6 +135,12 @@ footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;
 <div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【力学+2026-10-26】连接体：先整体求加速、再隔离求内力；超重失重看加速度方向</div>
 
 <div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【电磁+2026-10-27】洛伦兹力 f=qvB，方向由左手定则(运动电荷)；对带电粒子不做功</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【公式+2026-11-02】动能定理：合外力做功=ΔEk，只关心初末状态，不关心过程</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【波动+2026-11-03】机械波传播需要介质；波速 v=λf 由介质决定，与频率无关</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【公式+2026-11-06】理想气体状态方程 pV=nRT；等温过程 p₁V₁=p₂V₂</div>
 </footer>
 
 <script>
@@ -208,26 +214,42 @@ document.getElementById("eGrid").innerHTML=EX.map(f=>`<div class="card"><h3>${f[
 </script>
 
 <div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
-  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 格物君·物理专家团 · 智能体问答</h3>
-  <p style="font-size:13px;color:#555;margin:0 0 10px">点预设或直接输入问题，调用 格物君·物理专家团 的学科能力实时解答（在线时）。离线时显示"在线 AI 暂不可用，看站内题库"。</p>
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 格物君·物理专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('推导向心力 F=mv²/r=mω²r')">推导向心力 F=mv²/r=mω²r</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('单摆测 g 实验误差分析')">单摆测 g 实验误差分析</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道力学综合题')">一道力学综合题</button>
     <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 格物君·物理专家团</button>
   </div>
-  <textarea id="agent-q" placeholder="输入问题，点按钮问 格物君·物理专家团..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px"></textarea>
-  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">提问</button>
+  <textarea id="agent-q" placeholder="输入问题，匹配 格物君·物理专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
   <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
   <script>
-  var AGENT_API = {{base:"https://api.agnes-k2.com/v1", key:"", model:"agnes-flash"}};
-  function agentAsk(q){{
-    if(!q) q=document.getElementById('agent-q').value;
-    if(!q){{document.getElementById('agent-a').textContent='请输入问题';return;}}
-    var a=document.getElementById('agent-a'); a.textContent='\u23F3 格物君·物理专家团 思考中...';
-    fetch(AGENT_API.base+'/chat/completions',{{method:'POST',headers:{{'Content-Type':'application/json','Authorization':'Bearer '+AGENT_API.key}},
-      body:JSON.stringify({{model:AGENT_API.model,messages:[{{role:'system',content:'你是格物君·物理专家团，全学段物理含理论实验。回答要专业、准确、可核查，口语化带大白话。'}},{{role:'user',content:q}}],temperature:0.3}})
-    .then(function(r){{return r.json();}}).then(function(d){{
-      a.textContent=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'（无返回）';
-    }}).catch(function(e){{a.textContent='\u26A0 在线 AI 暂不可用('+e.message+')，看站内题库或稍后再试。';}});
-  }}
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["力学先画受力/过程图, 列已知未知再选方程; 末尾核单位量纲。", "实验先明每步目的与控制变量; 误差分析看系统/随机来源。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（格物君·物理专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
   </script>
 </div>
 </body></html>
